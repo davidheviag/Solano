@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Turnos - Óptica Solano</title>
+
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: #004a87;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .main-container {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    flex-wrap: wrap; /* Permite que los elementos bajen en pantallas chicas */
+  }
+
+  .calendar-box {
+    flex: 3;
+    min-width: 350px; /* Evita que se achique demasiado */
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .calendar-box iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    border: 0;
+  }
+
+  .whatsapp-panel {
+    flex: 1;
+    min-width: 320px;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .whatsapp-panel h3 {
+    color: #25d366;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 10px;
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    margin-top: 10px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Fundamental para que el padding no rompa el ancho */
+    font-size: 15px;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: #004a87;
+    box-shadow: 0 0 0 2px rgba(0,74,135,0.1);
+  }
+
+  button {
+    background: #25d366;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background: #128c7e;
+  }
+
+  .preview {
+    margin-top: 20px;
+    font-size: 13px;
+    background: #e9f7ef; /* Un verde muy clarito */
+    padding: 15px;
+    border-radius: 8px;
+    white-space: pre-line;
+    border-left: 5px solid #25d366;
+    color: #333;
+  }
+
+  /* Ajustes para Celulares */
+  @media (max-width: 768px) {
+    .main-container {
+      padding: 10px;
+      gap: 15px;
+    }
+    
+    .whatsapp-panel {
+      order: 1; /* El formulario aparece primero en el celu */
+    }
+
+    .calendar-box {
+      order: 2; /* El calendario aparece abajo */
+      height: 600px;
+    }
+  }
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>Gestión de Turnos - Óptica Solano</h1>
+</header>
+
+<div class="main-container">
+
+<div class="calendar-box">
+
+<iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ00iidEI5n43RKZaFJc_KjBGbaDUGfvuWXSRA8JA4hwZk-5yJVyr4lhWZ_up5B0u5ZiLAJZ_2CG?gv=true"></iframe>
+
+</div>
+
+<div class="whatsapp-panel">
+
+<h3>Aviso por WhatsApp</h3>
+
+<label>Nombre</label>
+<input type="text" id="nombre">
+
+<label>Teléfono</label>
+<input type="text" id="telefono" placeholder="Ej: 11XXXXXXXX">
+
+<label>Fecha</label>
+<input type="date" id="fecha">
+
+<label>Hora</label>
+<select id="hora">
+
+<option value="">Seleccionar horario</option>
+
+<option>10:00</option>
+<option>11:00</option>
+<option>12:00</option>
+<option>13:00</option>
+<option>15:00</option>
+<option>16:00</option>
+<option>17:00</option>
+<option>18:00</option>
+
+</select>
+
+<button onclick="enviarWhatsApp()">Enviar Aviso WA</button>
+
+<div class="preview" id="preview"></div>
+
+</div>
+
+</div>
+
+<script>
+
+function generarMensaje() {
+    const nombre = document.getElementById("nombre").value;
+    const fecha = document.getElementById("fecha").value;
+    const hora = document.getElementById("hora").value;
+
+    if (!nombre || !fecha || !hora) return "";
+
+    // 1. Evitamos el error de zona horaria
+    const partes = fecha.split("-");
+    const fechaObj = new Date(partes[0], partes[1] - 1, partes[2]);
+
+    // 2. Configuramos el formato
+    const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
+    let fechaFormateada = fechaObj.toLocaleDateString('es-AR', opciones);
+
+    // 3. Opcional: Poner la primera letra en mayúscula (ej: Lunes)
+    fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+
+    return `Hola ${nombre}!
+
+Te confirmo tu turno en Óptica Solano 👓
+
+📅 Día: ${fechaFormateada}
+🕒 Hora: ${hora}
+
+📍 Ubicación:
+https://maps.app.goo.gl/TuLinkRealAqui
+
+Si necesitás reprogramar el turno, avisanos por este medio.`;
+}
+
+function actualizarPreview(){
+
+document.getElementById("preview").innerText=generarMensaje();
+
+}
+
+document.querySelectorAll("input,select").forEach(el=>{
+el.addEventListener("input",actualizarPreview);
+});
+
+function enviarWhatsApp() {
+    let telefono = document.getElementById("telefono").value;
+    
+    // 1. Limpiamos el número de espacios, guiones o paréntesis
+    let telLimpio = telefono.replace(/\D/g, '');
+
+    // 2. Si el número tiene 10 dígitos (como el 3364297674), 
+    // le agregamos el prefijo de Argentina (549)
+    if (telLimpio.length === 10) {
+        telLimpio = "549" + telLimpio;
+    } 
+    // Si el usuario ya escribió el 54, nos aseguramos que tenga el 9
+    else if (telLimpio.startsWith("54") && !telLimpio.startsWith("549")) {
+        telLimpio = "549" + telLimpio.substring(2);
+    }
+
+    const mensaje = generarMensaje();
+
+    if (!telLimpio || !mensaje) {
+        alert("Por favor, cargá un teléfono válido y completá los datos.");
+        return;
+    }
+
+    const esCelular = /Android|iPhone/i.test(navigator.userAgent);
+    let url = "";
+
+    if (esCelular) {
+        url = `https://wa.me/${telLimpio}?text=${encodeURIComponent(mensaje)}`;
+    } else {
+        url = `https://web.whatsapp.com/send?phone=${telLimpio}&text=${encodeURIComponent(mensaje)}`;
+    }
+
+    window.open(url, "_blank");
+
+    // Limpieza de campos opcional
+    document.getElementById("nombre").value = "";
+    document.getElementById("telefono").value = "";
+    document.getElementById("fecha").value = "";
+    document.getElementById("hora").value = "";
+    document.getElementById("preview").innerText = "";
+}
+
+</script>
+
+</body>
+</html>
