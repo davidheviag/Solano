@@ -30,7 +30,7 @@
     flex-wrap: wrap; 
   }
 
-  /* Contenedor del calendario con posición relativa para la sombra */
+  /* Contenedor del calendario */
   .calendar-box {
     flex: 3;
     min-width: 350px;
@@ -39,7 +39,7 @@
     border: 1px solid #ddd;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    position: relative; /* Necesario para el skeleton */
+    position: relative;
     min-height: 500px;
   }
 
@@ -110,16 +110,21 @@
     font-weight: bold;
     color: #555;
     margin-top: 10px;
+    display: block;
   }
 
+  /* AJUSTE DE ANCHOS UNIFICADOS */
   input, select {
-    width: 100%;
+    width: 100%; /* Ocupa el 100% del contenedor padre */
+    display: block;
     padding: 12px;
     margin: 8px 0;
     border-radius: 6px;
     border: 1px solid #ccc;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Asegura que el padding no sume al ancho */
     font-size: 15px;
+    font-family: inherit; /* Evita que el campo date use otra fuente */
+    height: 45px; /* Altura fija para que todos se vean iguales */
   }
 
   input:focus, select:focus {
@@ -161,73 +166,61 @@
       padding: 10px;
       gap: 15px;
     }
-    
-    .whatsapp-panel {
-      order: 1;
-    }
-
-    .calendar-box {
-      order: 2;
-      height: 600px;
-    }
+    .whatsapp-panel { order: 1; }
+    .calendar-box { order: 2; height: 600px; }
   }
 </style>
 
 </head>
-
 <body>
 
 <header>
-<h1>Gestión de Turnos - Óptica Solano</h1>
+  <h1>Gestión de Turnos - Óptica Solano</h1>
 </header>
 
 <div class="main-container">
 
-<div class="calendar-box">
-    <div id="skeleton" class="skeleton-loader">Cargando calendario...</div>
+  <div class="calendar-box">
+      <div id="skeleton" class="skeleton-loader">Cargando calendario...</div>
+      <iframe 
+          src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ00iidEI5n43RKZaFJc_KjBGbaDUGfvuWXSRA8JA4hwZk-5yJVyr4lhWZ_up5B0u5ZiLAJZ_2CG?gv=true"
+          onload="document.getElementById('skeleton').classList.add('hidden')">
+      </iframe>
+  </div>
 
-    <iframe 
-        src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ00iidEI5n43RKZaFJc_KjBGbaDUGfvuWXSRA8JA4hwZk-5yJVyr4lhWZ_up5B0u5ZiLAJZ_2CG?gv=true"
-        onload="document.getElementById('skeleton').classList.add('hidden')">
-    </iframe>
-</div>
+  <div class="whatsapp-panel">
+    <h3>Aviso por WhatsApp</h3>
 
-<div class="whatsapp-panel">
+    <label>Nombre</label>
+    <input type="text" id="nombre">
 
-<h3>Aviso por WhatsApp</h3>
+    <label>Teléfono</label>
+    <input type="text" id="telefono" placeholder="Ej: 11XXXXXXXX">
 
-<label>Nombre</label>
-<input type="text" id="nombre">
+    <label>Fecha</label>
+    <input type="date" id="fecha">
 
-<label>Teléfono</label>
-<input type="text" id="telefono" placeholder="Ej: 11XXXXXXXX">
+    <label>Hora</label>
+    <select id="hora">
+      <option value="">Seleccionar horario</option>
+      <option>10:00</option>
+      <option>11:00</option>
+      <option>12:00</option>
+      <option>13:00</option>
+      <option>15:00</option>
+      <option>16:00</option>
+      <option>17:00</option>
+      <option>18:00</option>
+    </select>
 
-<label>Fecha</label>
-<input type="date" id="fecha">
+    <button onclick="enviarWhatsApp()">Enviar Aviso WA</button>
 
-<label>Hora</label>
-<select id="hora">
-<option value="">Seleccionar horario</option>
-<option>10:00</option>
-<option>11:00</option>
-<option>12:00</option>
-<option>13:00</option>
-<option>15:00</option>
-<option>16:00</option>
-<option>17:00</option>
-<option>18:00</option>
-</select>
-
-<button onclick="enviarWhatsApp()">Enviar Aviso WA</button>
-
-<div class="preview" id="preview"></div>
-
-</div>
+    <div class="preview" id="preview"></div>
+  </div>
 
 </div>
 
 <script>
-
 function generarMensaje() {
     const nombre = document.getElementById("nombre").value;
     const fecha = document.getElementById("fecha").value;
@@ -257,11 +250,11 @@ Si necesitás reprogramar el turno, avisanos por este medio.`;
 }
 
 function actualizarPreview(){
-    document.getElementById("preview").innerText=generarMensaje();
+    document.getElementById("preview").innerText = generarMensaje();
 }
 
-document.querySelectorAll("input,select").forEach(el=>{
-    el.addEventListener("input",actualizarPreview);
+document.querySelectorAll("input,select").forEach(el => {
+    el.addEventListener("input", actualizarPreview);
 });
 
 function enviarWhatsApp() {
@@ -283,13 +276,9 @@ function enviarWhatsApp() {
     }
 
     const esCelular = /Android|iPhone/i.test(navigator.userAgent);
-    let url = "";
-
-    if (esCelular) {
-        url = `https://wa.me/${telLimpio}?text=${encodeURIComponent(mensaje)}`;
-    } else {
-        url = `https://web.whatsapp.com/send?phone=${telLimpio}&text=${encodeURIComponent(mensaje)}`;
-    }
+    let url = esCelular 
+        ? `https://wa.me/${telLimpio}?text=${encodeURIComponent(mensaje)}` 
+        : `https://web.whatsapp.com/send?phone=${telLimpio}&text=${encodeURIComponent(mensaje)}`;
 
     window.open(url, "_blank");
 
@@ -299,7 +288,6 @@ function enviarWhatsApp() {
     document.getElementById("hora").value = "";
     document.getElementById("preview").innerText = "";
 }
-
 </script>
 
 </body>
