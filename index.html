@@ -2,9 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Turnos - Óptica Solano</title>
 
 <style>
+  /* Reset básico para evitar que elementos se salgan del borde */
+  * {
+    box-sizing: border-box;
+  }
+
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f0f2f5;
@@ -26,11 +32,10 @@
     flex: 1;
     display: flex;
     gap: 20px;
-    padding: 20px;
+    padding: 20px; /* Espacio en computadoras */
     flex-wrap: wrap; 
   }
 
-  /* Contenedor del calendario */
   .calendar-box {
     flex: 3;
     min-width: 350px;
@@ -50,7 +55,7 @@
     border: 0;
   }
 
-  /* EFECTO DE CARGA (SHIMMER) */
+  /* EFECTO DE CARGA */
   .skeleton-loader {
     position: absolute;
     top: 0;
@@ -58,13 +63,7 @@
     width: 100%;
     height: 100%;
     background: #f6f7f8;
-    background-image: linear-gradient(
-      90deg, 
-      #f6f7f8 0%, 
-      #edeef1 20%, 
-      #f6f7f8 40%, 
-      #f6f7f8 100%
-    );
+    background-image: linear-gradient(90deg, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
     background-repeat: no-repeat;
     background-size: 800px 100%; 
     display: flex;
@@ -81,9 +80,7 @@
     100% { background-position: 800px 0; }
   }
 
-  .hidden {
-    display: none !important;
-  }
+  .hidden { display: none !important; }
 
   /* PANEL DE WHATSAPP */
   .whatsapp-panel {
@@ -96,7 +93,6 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    box-sizing: border-box; /* Asegura que el padding no estire el panel */
   }
 
   .whatsapp-panel h3 {
@@ -108,25 +104,32 @@
   }
 
   label {
-    display: block; /* Forzamos que ocupe toda la línea */
+    display: block;
     font-size: 14px;
     font-weight: bold;
     color: #555;
     margin-top: 15px;
     margin-bottom: 5px;
+    text-align: left;
   }
 
-  /* AJUSTE UNIFICADO PARA TODOS LOS CAMPOS */
+  /* CAMPOS UNIFICADOS */
   input, select {
     display: block;
-    width: 100%; /* Ahora todos medirán lo mismo */
+    width: 100% !important; /* Forzamos el ancho total */
     padding: 12px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    box-sizing: border-box; /* Vital para que el padding no se sume al ancho */
-    font-size: 15px;
+    font-size: 16px; /* 16px evita el zoom automático en iPhone */
     font-family: inherit;
     background-color: #fff;
+    margin: 0;
+    -webkit-appearance: none; /* Quita estilos raros de iOS */
+  }
+
+  /* Ajuste específico para que el input de fecha no se achique */
+  input[type="date"] {
+    min-height: 45px;
   }
 
   input:focus, select:focus {
@@ -146,11 +149,10 @@
     cursor: pointer;
     margin-top: 25px;
     transition: background 0.3s ease;
+    width: 100%;
   }
 
-  button:hover {
-    background: #128c7e;
-  }
+  button:hover { background: #128c7e; }
 
   .preview {
     margin-top: 20px;
@@ -164,14 +166,16 @@
     min-height: 50px;
   }
 
+  /* AJUSTES PARA CELULAR */
   @media (max-width: 768px) {
     .main-container {
-      padding: 10px;
-      gap: 15px;
+      padding: 15px 15px; /* Agregamos margen lateral para que no toque los bordes del celu */
+      gap: 20px;
     }
     
     .whatsapp-panel {
       order: 1;
+      width: 100%; /* Asegura que ocupe el ancho disponible con su padding */
     }
 
     .calendar-box {
@@ -186,55 +190,52 @@
 <body>
 
 <header>
-<h1>Gestión de Turnos - Óptica Solano</h1>
+  <h1>Gestión de Turnos - Óptica Solano</h1>
 </header>
 
 <div class="main-container">
 
-<div class="calendar-box">
-    <div id="skeleton" class="skeleton-loader">Cargando calendario...</div>
-    <iframe 
-        src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ00iidEI5n43RKZaFJc_KjBGbaDUGfvuWXSRA8JA4hwZk-5yJVyr4lhWZ_up5B0u5ZiLAJZ_2CG?gv=true"
-        onload="document.getElementById('skeleton').classList.add('hidden')">
-    </iframe>
-</div>
+  <div class="calendar-box">
+      <div id="skeleton" class="skeleton-loader">Cargando calendario...</div>
+      <iframe 
+          src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ00iidEI5n43RKZaFJc_KjBGbaDUGfvuWXSRA8JA4hwZk-5yJVyr4lhWZ_up5B0u5ZiLAJZ_2CG?gv=true"
+          onload="document.getElementById('skeleton').classList.add('hidden')">
+      </iframe>
+  </div>
 
-<div class="whatsapp-panel">
+  <div class="whatsapp-panel">
+    <h3>Aviso por WhatsApp</h3>
 
-<h3>Aviso por WhatsApp</h3>
+    <label>Nombre</label>
+    <input type="text" id="nombre">
 
-<label>Nombre</label>
-<input type="text" id="nombre">
+    <label>Teléfono</label>
+    <input type="text" id="telefono" placeholder="Ej: 11XXXXXXXX">
 
-<label>Teléfono</label>
-<input type="text" id="telefono" placeholder="Ej: 11XXXXXXXX">
+    <label>Fecha</label>
+    <input type="date" id="fecha">
 
-<label>Fecha</label>
-<input type="date" id="fecha">
+    <label>Hora</label>
+    <select id="hora">
+        <option value="">Seleccionar horario</option>
+        <option>10:00</option>
+        <option>11:00</option>
+        <option>12:00</option>
+        <option>13:00</option>
+        <option>15:00</option>
+        <option>16:00</option>
+        <option>17:00</option>
+        <option>18:00</option>
+    </select>
 
-<label>Hora</label>
-<select id="hora">
-    <option value="">Seleccionar horario</option>
-    <option>10:00</option>
-    <option>11:00</option>
-    <option>12:00</option>
-    <option>13:00</option>
-    <option>15:00</option>
-    <option>16:00</option>
-    <option>17:00</option>
-    <option>18:00</option>
-</select>
+    <button onclick="enviarWhatsApp()">Enviar Aviso WA</button>
 
-<button onclick="enviarWhatsApp()">Enviar Aviso WA</button>
-
-<div class="preview" id="preview"></div>
-
-</div>
+    <div class="preview" id="preview"></div>
+  </div>
 
 </div>
 
 <script>
-// La lógica se mantiene exactamente igual que en tu versión original
 function generarMensaje() {
     const nombre = document.getElementById("nombre").value;
     const fecha = document.getElementById("fecha").value;
@@ -244,13 +245,11 @@ function generarMensaje() {
 
     const partes = fecha.split("-");
     const fechaObj = new Date(partes[0], partes[1] - 1, partes[2]);
-
     const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
     let fechaFormateada = fechaObj.toLocaleDateString('es-AR', opciones);
-
     fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
-    return `Hola ${nombre}!\n\nTe confirmo tu turno en Óptica Solano 👓\n\n📅 Día: ${fechaFormateada}\n🕒 Hora: ${hora}\n\n📍 Ubicación:\nhttps://maps.app.goo.gl/zJRtjzMXuYBidUed6\n\nSi necesitás reprogramar el turno, avisanos por este medio.`;
+    return `Hola ${nombre}!\n\nTe confirmo tu turno en Óptica Solano 👓\n\n📅 Día: ${fechaFormateada}\n🕒 Hora: ${hora}\n\n📍 Ubicación:\nhttps://maps.app.goo.gl/zJRtjzMXuYBidUed6\n\nSi\n\nSi necesitás reprogramar el turno, avisanos por este medio.`;
 }
 
 function actualizarPreview(){
@@ -267,13 +266,11 @@ function enviarWhatsApp() {
 
     if (telLimpio.length === 10) {
         telLimpio = "549" + telLimpio;
-    } 
-    else if (telLimpio.startsWith("54") && !telLimpio.startsWith("549")) {
+    } else if (telLimpio.startsWith("54") && !telLimpio.startsWith("549")) {
         telLimpio = "549" + telLimpio.substring(2);
     }
 
     const mensaje = generarMensaje();
-
     if (!telLimpio || !mensaje) {
         alert("Por favor, cargá un teléfono válido y completá los datos.");
         return;
@@ -286,7 +283,6 @@ function enviarWhatsApp() {
 
     window.open(url, "_blank");
 
-    // Limpieza
     document.getElementById("nombre").value = "";
     document.getElementById("telefono").value = "";
     document.getElementById("fecha").value = "";
