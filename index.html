@@ -26,7 +26,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 
-  /* --- DISEÑO PARA COMPUTADORA (Original) --- */
+  /* --- DISEÑO PARA COMPUTADORA --- */
   .main-container {
     flex: 1;
     display: flex;
@@ -54,7 +54,6 @@
     border: 0;
   }
 
-  /* EFECTO SHIMMER (Carga) */
   .skeleton-loader {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -102,18 +101,18 @@
     font-size: 14px;
     font-weight: bold;
     color: #555;
-    margin-top: 10px; /* Volvimos a tu original */
+    margin-top: 10px;
   }
 
   input, select {
     width: 100%;
     padding: 12px;
-    margin: 8px 0; /* Volvimos a tu original */
+    margin: 8px 0;
     border-radius: 6px;
     border: 1px solid #ccc;
     font-size: 15px;
     font-family: inherit;
-    -webkit-appearance: none; /* Arreglo para Safari */
+    -webkit-appearance: none;
   }
 
   input:focus, select:focus {
@@ -131,7 +130,7 @@
     font-weight: bold;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 15px; /* Volvimos a tu original */
+    margin-top: 15px;
     transition: background 0.3s ease;
   }
 
@@ -143,7 +142,7 @@
     background: #e9f7ef;
     padding: 15px;
     border-radius: 8px;
-    white-space: pre-line;
+    white-space: pre-wrap; /* Cambiado a pre-wrap para mejor soporte de saltos */
     border-left: 5px solid #25d366;
     color: #333;
   }
@@ -151,27 +150,27 @@
   /* --- AJUSTES EXCLUSIVOS PARA CELULAR --- */
   @media (max-width: 768px) {
     .main-container {
-      padding: 15px 15px; /* Margen de seguridad para que no toque bordes */
+      padding: 15px 15px;
       gap: 15px;
     }
     
     .whatsapp-panel {
-      order: 1; /* El formulario arriba */
+      order: 1;
       width: 100%;
     }
 
     .calendar-box {
-      order: 2; /* Calendario abajo */
+      order: 2;
       height: 600px;
     }
 
     input, select {
-      font-size: 16px; /* Evita zoom automático en iPhone */
+      font-size: 16px;
       width: 100% !important;
     }
 
     label {
-      margin-top: 15px; /* Un poco más de aire en móvil */
+      margin-top: 15px;
     }
   }
 </style>
@@ -227,7 +226,6 @@
 </div>
 
 <script>
-// La lógica sigue siendo la misma para que todo funcione perfecto
 function generarMensaje() {
     const nombre = document.getElementById("nombre").value;
     const fecha = document.getElementById("fecha").value;
@@ -241,8 +239,18 @@ function generarMensaje() {
     let fechaFormateada = fechaObj.toLocaleDateString('es-AR', opciones);
     fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
-    return `Hola ${nombre}!\n\nTe confirmo tu turno en Óptica Solano 👓\n\n📅 Día: ${fechaFormateada}\n🕒 Hora: ${hora}\n\n📍 Ubicación: https://maps.app.goo.gl/zJRtjzMXuYBidUed6     
-    Si necesitás reprogramar el turno, avisanos por este medio.`;
+    // Usamos Template Literals (backticks) para mantener el formato exacto
+    return `Hola ${nombre}!
+
+Te confirmo tu turno en Óptica Solano 👓
+
+📅 Día: ${fechaFormateada}
+🕒 Hora: ${hora}
+
+📍 Ubicación:
+https://maps.app.goo.gl/zJRtjzMXuYBidUed6
+
+Si necesitás reprogramar el turno, avisanos por este medio.`;
 }
 
 function actualizarPreview(){
@@ -276,7 +284,7 @@ function enviarWhatsApp() {
 
     window.open(url, "_blank");
 
-    // Limpieza de campos
+    // Limpieza
     document.getElementById("nombre").value = "";
     document.getElementById("telefono").value = "";
     document.getElementById("fecha").value = "";
