@@ -27,17 +27,20 @@
     display: flex;
     gap: 20px;
     padding: 20px;
-    flex-wrap: wrap; /* Permite que los elementos bajen en pantallas chicas */
+    flex-wrap: wrap; 
   }
 
+  /* Contenedor del calendario con posición relativa para la sombra */
   .calendar-box {
     flex: 3;
-    min-width: 350px; /* Evita que se achique demasiado */
+    min-width: 350px;
     background: white;
     border-radius: 12px;
     border: 1px solid #ddd;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative; /* Necesario para el skeleton */
+    min-height: 500px;
   }
 
   .calendar-box iframe {
@@ -45,6 +48,41 @@
     height: 100%;
     min-height: 500px;
     border: 0;
+  }
+
+  /* EFECTO SHIMMER (SOMBRA DE CARGA) */
+  .skeleton-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f6f7f8;
+    background-image: linear-gradient(
+      90deg, 
+      #f6f7f8 0%, 
+      #edeef1 20%, 
+      #f6f7f8 40%, 
+      #f6f7f8 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 800px 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #aaa;
+    animation: shimmer 1.5s infinite linear;
+    z-index: 5;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -800px 0; }
+    100% { background-position: 800px 0; }
+  }
+
+  .hidden {
+    display: none !important;
   }
 
   .whatsapp-panel {
@@ -80,7 +118,7 @@
     margin: 8px 0;
     border-radius: 6px;
     border: 1px solid #ccc;
-    box-sizing: border-box; /* Fundamental para que el padding no rompa el ancho */
+    box-sizing: border-box;
     font-size: 15px;
   }
 
@@ -110,7 +148,7 @@
   .preview {
     margin-top: 20px;
     font-size: 13px;
-    background: #e9f7ef; /* Un verde muy clarito */
+    background: #e9f7ef;
     padding: 15px;
     border-radius: 8px;
     white-space: pre-line;
@@ -118,7 +156,6 @@
     color: #333;
   }
 
-  /* Ajustes para Celulares */
   @media (max-width: 768px) {
     .main-container {
       padding: 10px;
@@ -126,11 +163,11 @@
     }
     
     .whatsapp-panel {
-      order: 1; /* El formulario aparece primero en el celu */
+      order: 1;
     }
 
     .calendar-box {
-      order: 2; /* El calendario aparece abajo */
+      order: 2;
       height: 600px;
     }
   }
@@ -147,9 +184,12 @@
 <div class="main-container">
 
 <div class="calendar-box">
+    <div id="skeleton" class="skeleton-loader">Cargando calendario...</div>
 
-<iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ00iidEI5n43RKZaFJc_KjBGbaDUGfvuWXSRA8JA4hwZk-5yJVyr4lhWZ_up5B0u5ZiLAJZ_2CG?gv=true"></iframe>
-
+    <iframe 
+        src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ00iidEI5n43RKZaFJc_KjBGbaDUGfvuWXSRA8JA4hwZk-5yJVyr4lhWZ_up5B0u5ZiLAJZ_2CG?gv=true"
+        onload="document.getElementById('skeleton').classList.add('hidden')">
+    </iframe>
 </div>
 
 <div class="whatsapp-panel">
@@ -167,9 +207,7 @@
 
 <label>Hora</label>
 <select id="hora">
-
 <option value="">Seleccionar horario</option>
-
 <option>10:00</option>
 <option>11:00</option>
 <option>12:00</option>
@@ -178,7 +216,6 @@
 <option>16:00</option>
 <option>17:00</option>
 <option>18:00</option>
-
 </select>
 
 <button onclick="enviarWhatsApp()">Enviar Aviso WA</button>
@@ -198,15 +235,12 @@ function generarMensaje() {
 
     if (!nombre || !fecha || !hora) return "";
 
-    // 1. Evitamos el error de zona horaria
     const partes = fecha.split("-");
     const fechaObj = new Date(partes[0], partes[1] - 1, partes[2]);
 
-    // 2. Configuramos el formato
     const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
     let fechaFormateada = fechaObj.toLocaleDateString('es-AR', opciones);
 
-    // 3. Opcional: Poner la primera letra en mayúscula (ej: Lunes)
     fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
     return `Hola ${nombre}!
@@ -223,27 +257,20 @@ Si necesitás reprogramar el turno, avisanos por este medio.`;
 }
 
 function actualizarPreview(){
-
-document.getElementById("preview").innerText=generarMensaje();
-
+    document.getElementById("preview").innerText=generarMensaje();
 }
 
 document.querySelectorAll("input,select").forEach(el=>{
-el.addEventListener("input",actualizarPreview);
+    el.addEventListener("input",actualizarPreview);
 });
 
 function enviarWhatsApp() {
     let telefono = document.getElementById("telefono").value;
-    
-    // 1. Limpiamos el número de espacios, guiones o paréntesis
     let telLimpio = telefono.replace(/\D/g, '');
 
-    // 2. Si el número tiene 10 dígitos (como el 3364297674), 
-    // le agregamos el prefijo de Argentina (549)
     if (telLimpio.length === 10) {
         telLimpio = "549" + telLimpio;
     } 
-    // Si el usuario ya escribió el 54, nos aseguramos que tenga el 9
     else if (telLimpio.startsWith("54") && !telLimpio.startsWith("549")) {
         telLimpio = "549" + telLimpio.substring(2);
     }
@@ -266,7 +293,6 @@ function enviarWhatsApp() {
 
     window.open(url, "_blank");
 
-    // Limpieza de campos opcional
     document.getElementById("nombre").value = "";
     document.getElementById("telefono").value = "";
     document.getElementById("fecha").value = "";
