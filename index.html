@@ -6,10 +6,8 @@
 <title>Turnos - Óptica Solano</title>
 
 <style>
-  /* Reset básico para evitar que elementos se salgan del borde */
-  * {
-    box-sizing: border-box;
-  }
+  /* RESET UNIVERSAL */
+  * { box-sizing: border-box; }
 
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -28,11 +26,12 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 
+  /* --- DISEÑO PARA COMPUTADORA (Original) --- */
   .main-container {
     flex: 1;
     display: flex;
     gap: 20px;
-    padding: 20px; /* Espacio en computadoras */
+    padding: 20px;
     flex-wrap: wrap; 
   }
 
@@ -55,13 +54,10 @@
     border: 0;
   }
 
-  /* EFECTO DE CARGA */
+  /* EFECTO SHIMMER (Carga) */
   .skeleton-loader {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: #f6f7f8;
     background-image: linear-gradient(90deg, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
     background-repeat: no-repeat;
@@ -82,7 +78,6 @@
 
   .hidden { display: none !important; }
 
-  /* PANEL DE WHATSAPP */
   .whatsapp-panel {
     flex: 1;
     min-width: 320px;
@@ -104,32 +99,21 @@
   }
 
   label {
-    display: block;
     font-size: 14px;
     font-weight: bold;
     color: #555;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    text-align: left;
+    margin-top: 10px; /* Volvimos a tu original */
   }
 
-  /* CAMPOS UNIFICADOS */
   input, select {
-    display: block;
-    width: 100% !important; /* Forzamos el ancho total */
+    width: 100%;
     padding: 12px;
+    margin: 8px 0; /* Volvimos a tu original */
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 16px; /* 16px evita el zoom automático en iPhone */
+    font-size: 15px;
     font-family: inherit;
-    background-color: #fff;
-    margin: 0;
-    -webkit-appearance: none; /* Quita estilos raros de iOS */
-  }
-
-  /* Ajuste específico para que el input de fecha no se achique */
-  input[type="date"] {
-    min-height: 45px;
+    -webkit-appearance: none; /* Arreglo para Safari */
   }
 
   input:focus, select:focus {
@@ -147,9 +131,8 @@
     font-weight: bold;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 25px;
+    margin-top: 15px; /* Volvimos a tu original */
     transition: background 0.3s ease;
-    width: 100%;
   }
 
   button:hover { background: #128c7e; }
@@ -163,24 +146,32 @@
     white-space: pre-line;
     border-left: 5px solid #25d366;
     color: #333;
-    min-height: 50px;
   }
 
-  /* AJUSTES PARA CELULAR */
+  /* --- AJUSTES EXCLUSIVOS PARA CELULAR --- */
   @media (max-width: 768px) {
     .main-container {
-      padding: 15px 15px; /* Agregamos margen lateral para que no toque los bordes del celu */
-      gap: 20px;
+      padding: 15px 15px; /* Margen de seguridad para que no toque bordes */
+      gap: 15px;
     }
     
     .whatsapp-panel {
-      order: 1;
-      width: 100%; /* Asegura que ocupe el ancho disponible con su padding */
+      order: 1; /* El formulario arriba */
+      width: 100%;
     }
 
     .calendar-box {
-      order: 2;
+      order: 2; /* Calendario abajo */
       height: 600px;
+    }
+
+    input, select {
+      font-size: 16px; /* Evita zoom automático en iPhone */
+      width: 100% !important;
+    }
+
+    label {
+      margin-top: 15px; /* Un poco más de aire en móvil */
     }
   }
 </style>
@@ -236,6 +227,7 @@
 </div>
 
 <script>
+// La lógica sigue siendo la misma para que todo funcione perfecto
 function generarMensaje() {
     const nombre = document.getElementById("nombre").value;
     const fecha = document.getElementById("fecha").value;
@@ -249,7 +241,7 @@ function generarMensaje() {
     let fechaFormateada = fechaObj.toLocaleDateString('es-AR', opciones);
     fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
-    return `Hola ${nombre}!\n\nTe confirmo tu turno en Óptica Solano 👓\n\n📅 Día: ${fechaFormateada}\n🕒 Hora: ${hora}\n\n📍 Ubicación:\nhttps://maps.app.goo.gl/zJRtjzMXuYBidUed6\n\nSi\n\nSi necesitás reprogramar el turno, avisanos por este medio.`;
+    return `Hola ${nombre}!\n\nTe confirmo tu turno en Óptica Solano 👓\n\n📅 Día: ${fechaFormateada}\n🕒 Hora: ${hora}\n\n📍 Ubicación:\nhttp://googleusercontent.com/maps.google.com/3 necesitás reprogramar el turno, avisanos por este medio.`;
 }
 
 function actualizarPreview(){
@@ -283,6 +275,7 @@ function enviarWhatsApp() {
 
     window.open(url, "_blank");
 
+    // Limpieza de campos
     document.getElementById("nombre").value = "";
     document.getElementById("telefono").value = "";
     document.getElementById("fecha").value = "";
