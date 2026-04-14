@@ -241,7 +241,8 @@ function generarMensaje() {
     let fechaFormateada = fechaObj.toLocaleDateString('es-AR', opciones);
     fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
-    return `Hola ${nombre}!\n\nTe confirmo tu turno en Óptica Solano 👓\n\n📅 Día: ${fechaFormateada}\n🕒 Hora: ${hora}\n\n📍 Ubicación: https://maps.app.goo.gl/zJRtjzMXuYBidUed6     Si necesitás reprogramar el turno, avisanos por este medio.`;
+    return `Hola ${nombre}!\n\nTe confirmo tu turno en Óptica Solano 👓\n\n📅 Día: ${fechaFormateada}\n🕒 Hora: ${hora}\n\n📍 Ubicación: https://maps.app.goo.gl/zJRtjzMXuYBidUed6     
+    Si necesitás reprogramar el turno, avisanos por este medio.`;
 }
 
 function actualizarPreview(){
